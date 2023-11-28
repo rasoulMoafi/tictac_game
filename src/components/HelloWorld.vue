@@ -3,10 +3,10 @@
 
 // const demo = ref(null);
 
-function myFunction(e: Event) {
+function myFunction(e: MouseEvent) {
   console.log("eeeeeeeeeeee", e);
-  let x = e.x;
-  let y = e.y;
+  let x = e.clientX;
+  let y = e.clientY;
   let coor = "Coordinates: (" + x + "," + y + ")";
   console.log("ddddddddd", coor);
   document.getElementById("demo")!.innerHTML = coor;

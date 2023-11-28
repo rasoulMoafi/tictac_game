@@ -12,7 +12,8 @@
   "dependencies": {
     "gasp": "^0.0.2",
     "gsap": "^3.12.2",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "vuetify": "^3.4.3"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",

@@ -1,21 +1,47 @@
 <template>
-  <div style="width:100px; height:100px; background-color: blue;"></div>
-  <v-btn @click="mm"></v-btn>
+  <div id="yourID" style="width:100px; height:100px; background-color: blue;"></div>
+
+  <div>
+    <svg class="canv">
+      <rect ref="p1" x="-5" y="-5" width="10" height="10" :transform="transform" />
+    </svg>
+    <div>x{{ x }} y{{ y }}</div>
+  </div>
 </template>
 <script setup lang="ts">
-import { gsap } from "gsap";
-import { ref } from "vue";
+import { gsap } from "gsap"
+import { ref, onMounted } from "vue"
 
-import Draggable from "gsap/Draggable";
+import Draggable from "gsap/Draggable"
 
-const xx = ref<string>("ali");
-let yes = ref<boolean>(false);
+gsap.registerPlugin(Draggable)
 
-function mm() {
-  yes = !yes;
-  if (yes) {
-    console.log("11111111111111111", xx);
-  }
+let x = ref<number>(200);
+let y = ref<number>(100);
+let p1 = ref(null);
+
+
+
+function transform() {
+  return `translate(${x},${y})`
 }
+
+
+
+
+
+onMounted(() => {
+  var a = Draggable.create(p1.value, {
+    onDragEnd: function (ev) {
+      x.value = ev.x;
+      y.value = ev.y;
+    }
+  })
+
+  Draggable.create("#yourID", {
+    type: "rotation",
+    inertia: true,
+  });
+})
 </script>
 <style></style>
