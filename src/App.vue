@@ -7,10 +7,8 @@ import gameBoard from "./components/gameBoard.vue";
 <template>
   <!-- <header>
   </header> -->
-  <v-container>
     <gameBoard />
     <!-- <HelloWorld /> -->
     <!-- <gsap /> -->
 
-  </v-container>
 </template>
