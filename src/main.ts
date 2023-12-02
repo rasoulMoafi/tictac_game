@@ -1,6 +1,12 @@
 import './assets/main.css'
 
+import { registerPlugins } from './plugins/vuetify'
 import { createApp } from 'vue'
 import App from './App.vue'
+import "./plugins/vuetify";
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+registerPlugins(app)
+
+app.mount('#app')
