@@ -1,7 +1,6 @@
 <template>
     <v-container fluid style="background-color: #161A30;text-align: center; height: 100dvh;">
         <v-row>
-            <h1 style="width: 100%;">ssssssssssssssss</h1>
         </v-row>
         <v-row>
             <v-col cols="5">
@@ -46,84 +45,45 @@
 <script setup lang="ts">
 import circle from '../assets/circle.svg';
 import cross from '../assets/cross.svg';
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 // import   from './'; 
 
 // const clickBox = ref<boolean>(false)
 const mark = ref<string>(circle)
-const cells = ref<string[]>(['c11','c12','c13','c21','c22','c23','c31','c32','c33'])
+const cells = ref<string[]>(['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'])
 const msg = ref<string>('')
 const msgDialog = ref<boolean>(false)
+const endGame = ref<boolean>(false)
 
 
-
-// add click listener to each cell
-function playerMove(event: MouseEvent) {
-
-    // console.log('11111111111111111111111111', document.getElementById('c11'));
-    // console.log('22222222222222222222222222', typeof document.getElementById('c11'));
-    if (!(event.target as HTMLDivElement).innerHTML) {
-        (event.target as HTMLDivElement).innerHTML += `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
-        checkRow();
-        switchMark();
-        computerMove();
-
-    } else {
-        console.log('nooooooooooooooooooooo');
-    }
-
-}
-
-
-
-
-
-// ===========================================================
-
-// var grid = document.getElementById('grid');
-// var msg = document.querySelector('.message');
-var chooser = document.querySelector('form');
-
-
-// add click listener to radio buttons
-// function setPlayer() {
-// mark.value = choiceKind.value === 'circle' ? 'circle' : 'cross';
-// msg.textContent = mark + ', click on a square to make your move!';
-// chooser.classList.add('game-on');
-// this.checked = false;
-// buildGrid();
-// }
-
-// add click listener to each cell
-// function playerMove() {
-//     if (this.textContent == '') {
-//         this.textContent = mark;
-//         checkRow();
-//         switchMark();
-//         computerMove();
-//     }
-// }
-
-// let the computer make the next move
 function computerMove() {
-    const emptyCells = ref<string[]>([])
+    // const emptyCells = ref<string[]>([])
     const random = ref<number>(0)
-    cells.value.forEach((cell) =>  {
 
-        if (!document.getElementById(cell)?.innerHTML) {
-            emptyCells.value.push(cell);
-        }
-    });
+    const emptyCells = getEmptyCells();
 
     // // computer marks a random EMPTY cell
-    random.value = Math.ceil(Math.random() * emptyCells.value.length) - 1;
+    random.value = Math.ceil(Math.random() * emptyCells.length) - 1;
     // console.log('11111111111111111111111111',emptyCells.value[random.value]);
     // console.log('22222222222222222222222222',document.getElementById(emptyCells.value[random.value]));
     // console.log('33333333333333333333333333',document.getElementById(emptyCells.value[random.value])?.innerHTML);
-    document.getElementById(emptyCells.value[random.value]).innerHTML = `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
+    switchMark();
+    document.getElementById(emptyCells[random.value])!.innerHTML = `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
     checkRow();
     switchMark();
 }
+
+
+function getEmptyCells() {
+    const emptyCells: string[] = [];
+    cells.value.forEach((cell) => {
+        if (!document.getElementById(cell)?.innerHTML) {
+            emptyCells.push(cell);
+        }
+    });
+    return emptyCells;
+}
+
 
 // switch player mark
 function switchMark() {
@@ -137,7 +97,7 @@ function switchMark() {
 // determine a winner
 function winner(a: HTMLElement | null, b: HTMLElement | null, c: HTMLElement | null) {
     if ((a?.innerHTML.includes('circle') && b?.innerHTML.includes('circle') && c?.innerHTML.includes('circle')) || (a?.innerHTML.includes('cross') && b?.innerHTML.includes('cross') && c?.innerHTML.includes('cross'))) {
-        
+
         msg.value = (mark.value === circle ? 'cross' : 'circle') + ' is the winner!';
         msgDialog.value = true
         a.classList.remove('firstStyle')
@@ -146,7 +106,9 @@ function winner(a: HTMLElement | null, b: HTMLElement | null, c: HTMLElement | n
         b.classList.add('winner');
         c.classList.remove('firstStyle')
         c.classList.add('winner');
+        endGame.value = true;
         return true;
+
     } else {
         return false;
     }
@@ -164,47 +126,160 @@ function checkRow() {
     winner(document.getElementById('c13'), document.getElementById('c22'), document.getElementById('c31'));
 }
 
-// clear the grid
-// function resetGrid() {
-//     mark = 'X';
-//     /* for (var i = 0; i < cells.length; i++) {
-//        cells[i].textContent = '';
-//        cells[i].classList.remove('winner');
-//      }*/
-//     cells.forEach(function (cell) {
-//         cell.textContent = '';
-//         cell.classList.remove('winner');
+
+
+
+
+// =================================
+
+
+function playerMove(event: MouseEvent) {
+    if (!endGame.value && !(event.target as HTMLDivElement).innerHTML) {
+        // Player makes a move
+        (event.target as HTMLDivElement).innerHTML += `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
+
+        // Check for a win or draw
+        // checkGameStatus();
+
+        // If the game is not over, let the computer make a move
+        if (!endGame.value) {
+            computerMove();
+        }
+        // checkGameStatus();
+
+    }
+
+}
+
+// function computerMove() {
+//     const emptyCells = getEmptyCells();
+
+//     // Use Minimax algorithm to find the best move
+//     const bestMove = getBestMove(emptyCells);
+
+//     // Make the move
+//     document.getElementById(bestMove)!.innerHTML = `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
+// }
+
+
+// function getBestMove(emptyCells: string[]) {
+//     let bestScore = -Infinity;
+//     let bestMove = emptyCells[0];
+
+//     emptyCells.forEach((cell) => {
+//         const element = document.getElementById(cell);
+//         if (element) {
+//             // Make a hypothetical move
+//             element.innerHTML = `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
+
+//             // Evaluate the score for the move using Minimax
+//             const score = minimax(2, false);
+
+//             // Undo the hypothetical move
+//             element.innerHTML = '';
+
+//             // Update the best move if a higher score is found
+//             if (score > bestScore) {
+//                 bestScore = score;
+//                 bestMove = cell;
+//             }
+//         }
 //     });
-//     msg.textContent = 'Choose your player:';
-//     chooser.classList.remove('game-on');
-//     grid.innerHTML = '';
+
+//     return bestMove;
 // }
 
-// // build the grid
-// function buildGrid() {
-//     for (var i = 1; i <= 9; i++) {
-//         var cell = document.createElement('li');
-//         cell.id = 'c' + i;
-//         cell.addEventListener('click', playerMove, false);
-//         grid.appendChild(cell);
+// function minimax(depth: number, isMaximizing: boolean): number {
+//     const scores: Record<string, number> = {
+//         cross: -1,
+//         circle: 1,
+//         draw: 0,
+//     };
+
+//     // Check the current state of the board
+//     const result = checkGameResult();
+
+//     if (result !== null) {
+//         return scores[result];
 //     }
-//     /* cells = document.querySelectorAll('li'); //Returns a NodeList, not an Array
-//     See https://css-tricks.com/snippets/javascript/loop-queryselectorall-matches */
-//     cells = Array.prototype.slice.call(grid.getElementsByTagName('li'));
+
+//     if (isMaximizing) {
+//         let bestScore = -Infinity;
+//         const emptyCells = getEmptyCells();
+
+//         emptyCells.forEach((cell) => {
+//             const element = document.getElementById(cell);
+//             if (element) {
+//                 // Make a hypothetical move
+//                 element.innerHTML = `<img src="${circle}" style="width: 150px; height: 150px;" />`;
+
+//                 // Recursively evaluate the score for the move
+//                 const score = minimax(depth + 1, true);
+
+//                 // Undo the hypothetical move
+//                 element.innerHTML = '';
+
+//                 // Update the best score if a higher score is found
+//                 bestScore = Math.max(score, bestScore);
+//             }
+//         });
+
+//         return bestScore;
+//     } else {
+//         let bestScore = Infinity;
+//         const emptyCells = getEmptyCells();
+
+//         emptyCells.forEach((cell) => {
+//             const element = document.getElementById(cell);
+//             if (element) {
+//                 // Make a hypothetical move
+//                 element.innerHTML = `<img src="${cross}" style="width: 150px; height: 150px;" />`;
+
+//                 // Recursively evaluate the score for the move
+//                 const score = minimax(depth + 1, false);
+
+//                 // Undo the hypothetical move
+//                 element.innerHTML = '';
+
+//                 // Update the best score if a lower score is found
+//                 bestScore = Math.min(score, bestScore);
+//             }
+//         });
+
+//         return bestScore;
+//     }
 // }
 
-// var players = Array.prototype.slice.call(document.querySelectorAll('input[name=player-choice]'));
-// players.forEach(function (choice) {
-//     choice.addEventListener('click', setPlayer, false);
-// });
+// function checkGameResult(): string | null {
+//     // Check for a win
+//     if (endGame.value) {
+//         return mark.value === circle ? 'circle' : 'cross';
+//     }
 
-// var resetButton = chooser.querySelector('button');
-// resetButton.addEventListener('click', function (e) {
-//     e.preventDefault();
-//     resetGrid();
-// });
+//     // Check for a draw
+//     const emptyCells = getEmptyCells();
+//     if (emptyCells.length === 0) {
+//         return 'draw';
+//     }
 
-// ===========================================================
+//     // Game is still ongoing
+//     return null;
+// }
+
+// function checkGameStatus() {
+//     const result = checkGameResult();
+
+//     if (result !== null) {
+//         // Display the result in a dialog
+//         msg.value =
+//             result === 'draw'
+//                 ? 'The game is a draw!'
+//                 : `${result === 'circle' ? 'Cross' : 'Circle'} is the winner!`;
+
+//         msgDialog.value = true;
+//         endGame.value = true;
+//     }
+// }
 </script>
 <style scoped>
 .winner {
