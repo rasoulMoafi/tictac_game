@@ -30,13 +30,14 @@
         </v-row>
         <v-dialog v-model="msgDialog" transition="dialog-bottom-transition" width="auto">
 
-            <v-card>
-                <v-card-text style="background-color: #95CD41;">
-                    <div class="text-h2 pa-12" style="color:#FF7F3F ;">{{ msg }}</div>
+            <v-card class="rounded-xl" style="border: 13px solid #F6D776; margin: 13px;">
+                <v-card-text style="background-color: #F0ECE5;">
+                    <div class="text-h2 pa-12" style="color:#0F1035 ;">{{ msg }}</div>
                 </v-card-text>
-                <!-- <v-card-actions class="justify-end">
-                    <v-btn variant="text" @click="msgDialog = false">Close</v-btn>
-                </v-card-actions> -->
+                <v-card-actions style="background-color: #F0ECE5;" class="justify-center">
+                    <v-btn variant="text" @click="startGame" class="text-h4 px-12 pt-8 pb-16 mb-6 rounded-xl endBtn"
+                        color="white">try again</v-btn>
+                </v-card-actions>
             </v-card>
         </v-dialog>
         <!-- <v-dialog v-model="msgDialog"></v-dialog> -->
@@ -55,18 +56,24 @@ const msg = ref<string>('')
 const msgDialog = ref<boolean>(false)
 const endGame = ref<boolean>(false)
 
+function startGame() {
+    endGame.value = false;
+    cells.value.forEach((cell) => {
+        document.getElementById(cell).innerHTML = '';
+        document.getElementById(cell).classList.remove('winner')
+        document.getElementById(cell).classList.add('firstStyle')
+    });
+    msgDialog.value = false;
+}
 
 function computerMove() {
-    // const emptyCells = ref<string[]>([])
+
     const random = ref<number>(0)
 
     const emptyCells = getEmptyCells();
 
     // // computer marks a random EMPTY cell
     random.value = Math.ceil(Math.random() * emptyCells.length) - 1;
-    // console.log('11111111111111111111111111',emptyCells.value[random.value]);
-    // console.log('22222222222222222222222222',document.getElementById(emptyCells.value[random.value]));
-    // console.log('33333333333333333333333333',document.getElementById(emptyCells.value[random.value])?.innerHTML);
     switchMark();
     document.getElementById(emptyCells[random.value])!.innerHTML = `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
     checkRow();
@@ -81,7 +88,15 @@ function getEmptyCells() {
             emptyCells.push(cell);
         }
     });
-    return emptyCells;
+    // ======================= if the game being tie
+    if (emptyCells.length < 1) {
+        msg.value = 'the match is tie !';
+        msgDialog.value = true
+        endGame.value = true;
+    }
+    else {
+        return emptyCells;
+    }
 }
 
 
@@ -98,7 +113,7 @@ function switchMark() {
 function winner(a: HTMLElement | null, b: HTMLElement | null, c: HTMLElement | null) {
     if ((a?.innerHTML.includes('circle') && b?.innerHTML.includes('circle') && c?.innerHTML.includes('circle')) || (a?.innerHTML.includes('cross') && b?.innerHTML.includes('cross') && c?.innerHTML.includes('cross'))) {
 
-        msg.value = (mark.value === circle ? 'cross' : 'circle') + ' is the winner!';
+        msg.value = (mark.value === circle ? 'circle' : 'cross') + ' is the winner!';
         msgDialog.value = true
         a.classList.remove('firstStyle')
         a.classList.add('winner')
@@ -107,10 +122,6 @@ function winner(a: HTMLElement | null, b: HTMLElement | null, c: HTMLElement | n
         c.classList.remove('firstStyle')
         c.classList.add('winner');
         endGame.value = true;
-        return true;
-
-    } else {
-        return false;
     }
 }
 
@@ -134,14 +145,14 @@ function checkRow() {
 
 
 function playerMove(event: MouseEvent) {
-    if (!endGame.value && !(event.target as HTMLDivElement).innerHTML) {
-        // Player makes a move
+    if ((event.target as HTMLDivElement).classList.value == 'firstStyle') {
+        // ================== Player makes a move =========================
         (event.target as HTMLDivElement).innerHTML += `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
 
-        // Check for a win or draw
-        // checkGameStatus();
+        // ================== Check for a win or draw ========================
+        checkRow();
 
-        // If the game is not over, let the computer make a move
+        // ========================= If the game is not over, let the computer make a move
         if (!endGame.value) {
             computerMove();
         }
@@ -286,6 +297,12 @@ function playerMove(event: MouseEvent) {
     animation: victoryChnaging 0.5s infinite;
     background-color: #B6BBC4;
 }
+
+.endBtn{
+    animation: victoryChnaging 0.5s infinite;
+    background-color: #0F1035;
+}
+
 
 @keyframes victoryChnaging {
 
