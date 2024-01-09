@@ -56,6 +56,8 @@ const msg = ref<string>('')
 const msgDialog = ref<boolean>(false)
 const endGame = ref<boolean>(false)
 
+
+console.log('just for test');
 function startGame() {
     endGame.value = false;
     cells.value.forEach((cell) => {
