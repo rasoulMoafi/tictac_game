@@ -58,6 +58,7 @@ const endGame = ref<boolean>(false)
 
 
 console.log('just for test');
+console.log('just for test2');
 function startGame() {
     endGame.value = false;
     cells.value.forEach((cell) => {
