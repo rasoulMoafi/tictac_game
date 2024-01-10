@@ -3,23 +3,46 @@
         <v-row>
         </v-row>
         <v-row>
-            <v-col cols="5">
-                <br><br><br><br><br><br><br><br><br><br><br><br><br>
-                <div class="d-flex flex-row justify-center">
-                    <div style="width: 180px; height: 180px; margin:10px 20px; border-radius: 15%;background-color:#F0ECE5; display: flex;align-items: center;justify-content: center;"
-                        @click="mark = circle">
-                        <img :src="circle" style="width: 150px; height: 150px;" />
-                    </div>
-                    <div style="width: 180px; height: 180px; margin:10px 20px; border-radius: 15%;background-color:#F0ECE5 ; display: flex;align-items: center;justify-content: center;"
-                        @click="mark = cross">
-                        <img :src="cross" style="width: 150px; height: 150px;" />
-                    </div>
-                </div>
-            </v-col>
+            <!-- <v-col cols="5"> -->
+               
+             
+      <v-dialog
+        v-model="chooseModal"
+        transition="dialog-top-transition"
+        width="500"
+        height="300"
+        persistent
+      >
+      <div style="background-color: #F0ECE5; border-radius: 10px; padding: 20px;" class="d-flex flex-wrap flex-row justify-center">
+                       <v-text class="w-100 d-flex justify-center mb-2">
+                        Which One? 😃
+                       </v-text>
+
+                            <div style="width: 100%; display: flex; justify-content: center;">
+                                <div class="selected"  style="width: 40%; margin:10px 20px; padding: 10px; border-radius: 15%;background-color:#F0ECE5; display: flex;align-items: center;justify-content: center; "
+                                @click="select(circle,$event)">
+                                  <img :src="circle" style="width: 80%;" />
+                                </div>
+                            
+                                <div class="selected" style="width: 40%; margin:10px 20px; padding: 10px; border-radius: 15%;background-color:#F0ECE5 ; display: flex;align-items: center;justify-content: center; "
+                                @click="select(cross,$event)">
+                                 <img :src="cross" style="width: 80%;" />
+                                </div>
+
+                            </div>
+      </div>
+    
+      </v-dialog>
+
+
+          
+
+            <!-- </v-col> -->
+            
             <v-col cols="7" style="margin: 100px auto;">
                 <div style=" width:600px; height: 200px; background-color: #B6BBC4; display: flex; align-items: center; justify-content: center;"
-                    v-for="item in 3">
-                    <div v-for="box in 3">
+                    v-for="(item, i) in 3" :key="i">
+                    <div v-for="(box, k) in 3" :key="k">
                         <div class="firstStyle" :id="'c' + item + box"
                             style=" width: 180px; height: 180px; margin:10px;  display: flex;align-items: center;justify-content: center;"
                             @click="playerMove">
@@ -50,14 +73,32 @@ import { ref, watch, onMounted } from 'vue';
 // import   from './'; 
 
 // const clickBox = ref<boolean>(false)
-const mark = ref<string>(circle)
+
+const chooseModal = ref<boolean>(true)
+
+
+
+
+const mark = ref<string>(null)
 const cells = ref<string[]>(['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'])
 const msg = ref<string>('')
 const msgDialog = ref<boolean>(false)
 const endGame = ref<boolean>(false)
 
 
-console.log('just for test');
+
+function select(item:string,e:Event){
+    mark.value = item
+
+    e.target.parentElement.style.backgroundColor = "rgba(176, 250, 66, 0.5)"
+    e.target.style.transition = '2s'
+    e.target.style.transform = "rotate(450deg)";
+
+    setTimeout(()=>{
+        chooseModal.value = false
+    },1500)
+}
+
 function startGame() {
     endGame.value = false;
     cells.value.forEach((cell) => {
@@ -295,6 +336,11 @@ function playerMove(event: MouseEvent) {
 // }
 </script>
 <style scoped>
+
+.selected :hover{
+    cursor: pointer;
+    scale: 1.1;
+}
 .winner {
     animation: victoryChnaging 0.5s infinite;
     background-color: #B6BBC4;
