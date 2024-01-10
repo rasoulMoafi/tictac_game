@@ -39,16 +39,19 @@
 
             <!-- </v-col> -->
             
-            <v-col cols="7" style="margin: 100px auto;">
-                <div style=" width:600px; height: 200px; background-color: #B6BBC4; display: flex; align-items: center; justify-content: center;"
-                    v-for="(item, i) in 3" :key="i">
-                    <div v-for="(box, k) in 3" :key="k">
-                        <div class="firstStyle" :id="'c' + item + box"
-                            style=" width: 180px; height: 180px; margin:10px;  display: flex;align-items: center;justify-content: center;"
+            <v-col cols="12" style="margin: 100px auto; width: 100%; height: 100%;" class="d-flex justify-center">
+                <v-col cols="12" sm="8" md="6" lg="3" style="height: 130px; padding: 0;" class="d-flex justify-center flex-wrap" >
+                    <div v-for="(item, i) in 3" :key="i" style=" width:100%; height: 90%; background-color: #B6BBC4; display: flex; align-items: center; justify-content: center;">
+
+                        <div v-for="(box, k) in 3" :key="k" style="width: 30%; height: 85%; margin: 0 5px;">
+                            <div class="firstStyle" :id="'c' + item + box"
+                            style=" width: 100%; height: 100%;  display: flex;align-items: center;justify-content: space-evenly;"
                             @click="playerMove">
                         </div>
-                    </div>
-                </div>
+
+                     </div>
+                 </div>
+                </v-col>
             </v-col>
         </v-row>
         <v-dialog v-model="msgDialog" transition="dialog-bottom-transition" width="auto">
@@ -118,7 +121,7 @@ function computerMove() {
     // // computer marks a random EMPTY cell
     random.value = Math.ceil(Math.random() * emptyCells.length) - 1;
     switchMark();
-    document.getElementById(emptyCells[random.value])!.innerHTML = `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
+    document.getElementById(emptyCells[random.value])!.innerHTML = `<img src="${mark.value}" style="width: 75px; height: 75px;" />`;
     checkRow();
     switchMark();
 }
@@ -190,7 +193,7 @@ function checkRow() {
 function playerMove(event: MouseEvent) {
     if ((event.target as HTMLDivElement).classList.value == 'firstStyle') {
         // ================== Player makes a move =========================
-        (event.target as HTMLDivElement).innerHTML += `<img src="${mark.value}" style="width: 150px; height: 150px;" />`;
+        (event.target as HTMLDivElement).innerHTML += `<img src="${mark.value}" style="width: 75px; height: 75px;" />`;
 
         // ================== Check for a win or draw ========================
         checkRow();
