@@ -2,7 +2,6 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": [
     "src/**/*.ts",
-    "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
   ],
@@ -13,6 +12,11 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -30,6 +34,7 @@
     "strictFunctionTypes": false
   },
   "composite": true,
+  "resolveJsonModule": true,
   "baseUrl": ".",
   "paths": {
     "@/*": [
