@@ -1,6 +1,16 @@
 <template>
     <v-container fluid style="background-color: #161A30;text-align: center; height: 100dvh;">
         <v-row>
+            <v-col cols="12" class="mt-16 d-flex flex-row justify-center align-center">
+                <div class="px-md-10 px-lg-15 px-5">
+                    <p class="text-h4 font-weight-bold text-green-lighten-1">You</p>
+                    <p class="text-h3 font-weight-bold text-amber-lighten-1 mt-5">{{ scores.player }}</p>
+                </div>
+                <div class="px-md-10 px-lg-15 px-5">
+                    <p class="text-h4 font-weight-bold text-red-lighten-1">Competer </p>
+                    <p class="text-h3 font-weight-bold text-amber-lighten-1 mt-5">{{ scores.computer }}</p>
+                </div>
+            </v-col>
         </v-row>
         <v-row>
             <!-- <v-col cols="5"> -->
@@ -36,7 +46,7 @@
 
             <!-- </v-col> -->
 
-            <v-col cols="12" style="margin: 100px auto; width: 100%; height: 100%;" class="d-flex justify-center">
+            <v-col cols="12" style="margin: 50px auto; width: 100%; height: 100%;" class="d-flex justify-center">
                 <v-col cols="12" sm="8" md="6" lg="3" style="height: 130px; padding: 0;"
                     class="d-flex justify-center flex-wrap">
                     <div v-for="(item, i) in 3" :key="i"
@@ -82,17 +92,32 @@ const chooseModal = ref<boolean>(true)
 
 
 const mark = ref<string>('')
+const playerMark = ref<string>('')
 const cells = ref<string[]>(['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'])
 const msg = ref<string>('')
 const msgDialog = ref<boolean>(false)
 const endGame = ref<boolean>(false)
 const bestMovie = ref<string>('')
-
+type scoreTypes = {
+    player: number;
+    computer: number;
+};
+const scores = ref<scoreTypes>({ player: 0, computer: 0 })
 // const xx = document 
+
+onMounted(() => {
+    let retString1 = localStorage.getItem("ticTakCompVSPlayer");
+    if (retString1) {
+        scores.value = JSON.parse(retString1);
+
+    } else {
+        scores.value = { player: 0, computer: 0 }
+    }
+})
 
 function select(item: string, e: Event) {
     mark.value = item;
-
+    playerMark.value = item;
     (e.target as HTMLDivElement).parentElement!.style.backgroundColor = "rgba(176, 250, 66, 0.5)";
     (e.target as HTMLDivElement).style.transition = '2s';
     (e.target as HTMLDivElement).style.transform = "rotate(450deg)";
@@ -103,6 +128,7 @@ function select(item: string, e: Event) {
 }
 
 function startGame() {
+    mark.value = playerMark.value;
     endGame.value = false;
     bestMovie.value = '';
     cells.value.forEach((cell) => {
@@ -149,7 +175,14 @@ function winner(a: HTMLElement | null, b: HTMLElement | null, c: HTMLElement | n
         if (item) {
             bestMovie.value = item
         } else {
-            msg.value = (mark.value === circle ? 'circle' : 'cross') + ' is the winner!';
+            msg.value = (mark.value === playerMark.value ? 'you are the winner!' : 'computer is the winner!');
+            if (mark.value === playerMark.value) {
+                scores.value.player += 1
+            } else {
+                scores.value.computer += 1
+            }
+            let string = JSON.stringify(scores.value);
+            localStorage.setItem("ticTakCompVSPlayer", string);
             msgDialog.value = true
             a.classList.remove('firstStyle')
             a.classList.add('winner')
