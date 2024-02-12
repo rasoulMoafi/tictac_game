@@ -5,12 +5,20 @@
     "vitest.config.*",
     "cypress.config.*",
     "nightwatch.conf.*",
-    "playwright.config.*"
+    "playwright.config.*",
+    "src/components",
+    "src/custom.d.ts"
   ],
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node"]
+    "lib": [
+      "es2017",
+      "es2016",
+      "es2015",
+      "esnext",
+      "dom"
+    ],
   }
 }
