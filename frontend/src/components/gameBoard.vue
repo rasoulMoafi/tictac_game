@@ -76,6 +76,9 @@
             </v-card>
         </v-dialog>
         <!-- <v-dialog v-model="msgDialog"></v-dialog> -->
+        <div v-if="computerLoading" style="width: 100%; height: 100vh; background-color: rgba(255, 0, 0, 0) ;position: fixed; z-index: 10; top: 0; left: 0;">
+            
+        </div>
     </v-container>
 </template>
 <script setup lang="ts">
@@ -116,11 +119,11 @@ onMounted(() => {
 })
 
 function select(item: string, e: Event) {
-    mark.value = item;
-    playerMark.value = item;
-    (e.target as HTMLDivElement).parentElement!.style.backgroundColor = "rgba(176, 250, 66, 0.5)";
-    (e.target as HTMLDivElement).style.transition = '2s';
-    (e.target as HTMLDivElement).style.transform = "rotate(450deg)";
+        mark.value = item;
+        playerMark.value = item;
+        (e.target as HTMLDivElement).parentElement!.style.backgroundColor = "rgba(176, 250, 66, 0.5)";
+        (e.target as HTMLDivElement).style.transition = '2s';
+        (e.target as HTMLDivElement).style.transform = "rotate(450deg)";
 
     setTimeout(() => {
         chooseModal.value = false
@@ -211,7 +214,7 @@ function checkRow() {
 
 // =================================
 
-
+const computerLoading = ref(false)
 function playerMove(event: MouseEvent) {
     if ((event.target as HTMLDivElement).classList.value == 'firstStyle') {
         // ================== Player makes a move =========================
@@ -222,7 +225,11 @@ function playerMove(event: MouseEvent) {
 
         // ========================= If the game is not over, let the computer make a move
         if (!endGame.value) {
-            computerMove();
+            computerLoading.value = true
+            setTimeout(()=>{
+                computerMove();
+                computerLoading.value = false
+            },1000)
         }
         // checkGameStatus();
 
